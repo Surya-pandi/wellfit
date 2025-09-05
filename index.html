@@ -1,0 +1,2037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WellFit - Online Personal Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Animated Background Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+            opacity: 0.4;
+        }
+
+        .particle:nth-child(odd) {
+            animation-delay: -2s;
+            animation-duration: 8s;
+        }
+
+        .particle:nth-child(even) {
+            animation-delay: -4s;
+            animation-duration: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.4;
+            }
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+                opacity: 0.7;
+            }
+        }
+
+        /* Gym Equipment Animation */
+        .gym-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .gym-element {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: gymFloat 10s ease-in-out infinite;
+        }
+
+        .gym-element:nth-child(1) {
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .gym-element:nth-child(2) {
+            top: 60%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .gym-element:nth-child(3) {
+            top: 40%;
+            left: 80%;
+            animation-delay: 4s;
+        }
+
+        .gym-element:nth-child(4) {
+            top: 80%;
+            left: 30%;
+            animation-delay: 6s;
+        }
+
+        .gym-element:nth-child(5) {
+            top: 10%;
+            right: 40%;
+            animation-delay: 8s;
+        }
+
+        @keyframes gymFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.1;
+            }
+            50% {
+                transform: translateY(-30px) rotate(180deg);
+                opacity: 0.2;
+            }
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        nav.scrolled {
+            border-bottom-color: #ff6b35;
+            box-shadow: 0 5px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #ff6b35;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover img {
+            transform: scale(1.1) rotate(360deg);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-menu a:hover {
+            color: #ff6b35;
+            background: rgba(255, 107, 53, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-menu a:hover::after {
+            width: 80%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,107,53,0.05)"/><circle cx="75" cy="75" r="1" fill="rgba(255,140,66,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: pulseBackground 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseBackground {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+            animation: heroEnter 1.5s ease-out;
+        }
+
+        @keyframes heroEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(50px) scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #ffffff, #ff6b35, #ff8c42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from {
+                filter: brightness(1);
+            }
+            to {
+                filter: brightness(1.1);
+            }
+        }
+
+        .hero p {
+            font-size: 1.8rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            animation: slideUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 0.9;
+                transform: translateY(0);
+            }
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            color: white;
+            padding: 20px 50px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 30px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Floating Action Elements */
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            border-radius: 50%;
+            animation: floatShape 8s ease-in-out infinite;
+            opacity: 0.08;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            right: 25%;
+            animation-delay: 4s;
+        }
+
+        @keyframes floatShape {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-50px) rotate(180deg);
+            }
+        }
+
+        /* Animated Gym Equipment Icons */
+        .gym-icons {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .gym-icon {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.1;
+            animation: gymBounce 6s ease-in-out infinite;
+        }
+
+        .gym-icon:nth-child(1) {
+            top: 15%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .gym-icon:nth-child(2) {
+            top: 25%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        .gym-icon:nth-child(3) {
+            bottom: 30%;
+            left: 8%;
+            animation-delay: 2s;
+        }
+
+        .gym-icon:nth-child(4) {
+            bottom: 20%;
+            right: 5%;
+            animation-delay: 3s;
+        }
+
+        @keyframes gymBounce {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+                opacity: 0.1;
+            }
+            25% {
+                transform: translateY(-20px) scale(1.1);
+                opacity: 0.15;
+            }
+            50% {
+                transform: translateY(-10px) scale(1.05);
+                opacity: 0.2;
+            }
+            75% {
+                transform: translateY(-15px) scale(1.08);
+                opacity: 0.12;
+            }
+        }
+
+        /* Sections */
+        .section {
+            padding: 120px 0;
+            position: relative;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .section:nth-child(even) {
+            background: #2d2d2d;
+        }
+
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #ff6b35, transparent);
+            animation: sectionBorder 3s ease-in-out infinite;
+        }
+
+        @keyframes sectionBorder {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.5; }
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3.5rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(45deg, #ffffff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            animation: titleSlide 1s ease-out;
+        }
+
+        @keyframes titleSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            border-radius: 2px;
+            animation: underlineExpand 1s ease-out 0.5s both;
+        }
+
+        @keyframes underlineExpand {
+            from { width: 0; }
+            to { width: 100px; }
+        }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            padding: 2.5rem;
+            border-radius: 25px;
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            border-radius: 25px;
+            z-index: 1;
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 23px;
+            z-index: 2;
+            transition: all 0.4s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) scale(1.03);
+            box-shadow: 0 25px 50px rgba(255, 107, 53, 0.2);
+        }
+
+        .service-card > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        .service-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            animation: iconBounce 2s ease-in-out infinite;
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.2);
+        }
+
+        @keyframes iconBounce {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .service-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        .service-card:hover h3 {
+            color: #ff6b35;
+        }
+
+        /* Trainer Section */
+        .trainer-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+            align-items: center;
+        }
+
+        .trainer-image {
+            position: relative;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Updated Trainer Photo Styles for Perfect Centering */
+        .trainer-photo {
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 30px 60px rgba(255, 107, 53, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+        }
+
+        .trainer-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .trainer-photo::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            animation: photoRotate 4s linear infinite;
+        }
+
+        @keyframes photoRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .trainer-photo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 40px 80px rgba(255, 107, 53, 0.4);
+        }
+
+        .trainer-info h3 {
+            font-size: 2.8rem;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            animation: fadeInLeft 1s ease-out;
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .trainer-info p {
+            font-size: 1.3rem;
+            color: #cccccc;
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            animation: fadeInLeft 1s ease-out 0.2s both;
+        }
+
+        .credentials {
+            list-style: none;
+            margin: 2.5rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .credentials li {
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: credentialsPop 0.5s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .credentials li:nth-child(1) { animation-delay: 0.1s; }
+        .credentials li:nth-child(2) { animation-delay: 0.2s; }
+        .credentials li:nth-child(3) { animation-delay: 0.3s; }
+        .credentials li:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes credentialsPop {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .credentials li:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 4rem;
+        }
+
+        .pricing-card {
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 30px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 1;
+        }
+
+        .pricing-card::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 28px;
+            z-index: 2;
+        }
+
+        .pricing-card:hover::before {
+            opacity: 1;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-20px) scale(1.05);
+            box-shadow: 0 30px 60px rgba(255, 107, 53, 0.2);
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            color: white;
+            transform: scale(1.08);
+            animation: featuredPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes featuredPulse {
+            from {
+                box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+            }
+            to {
+                box-shadow: 0 30px 60px rgba(255, 107, 53, 0.4);
+            }
+        }
+
+        .pricing-card.featured::before,
+        .pricing-card.featured::after {
+            display: none;
+        }
+
+        .pricing-card > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        .pricing-card h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .featured .price {
+            color: white;
+            -webkit-text-fill-color: white;
+        }
+
+        .features {
+            list-style: none;
+            margin: 2.5rem 0;
+            text-align: left;
+        }
+
+        .features li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .featured .features li::before {
+            color: white;
+        }
+
+        /* Contact */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5rem;
+        }
+
+        /* Updated Google Form Embed Styles */
+        .google-form-container {
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 25px;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .google-form-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            opacity: 0.05;
+            z-index: 1;
+        }
+
+        .google-form-container > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .google-form-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 15px;
+            background: #ffffff;
+        }
+
+        .contact-info {
+            padding: 3rem 0;
+            background: linear-gradient(135deg, #2a2a2a, #1e1e1e);
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 107, 53, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-info::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 107, 53, 0.03) 0%, transparent 70%);
+            animation: contactGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes contactGlow {
+            0% { transform: rotate(0deg); opacity: 0.2; }
+            100% { transform: rotate(180deg); opacity: 0.4; }
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+            animation: contactSlide 0.8s ease-out;
+            animation-fill-mode: both;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 1.5rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 107, 53, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .contact-item:nth-child(1) { animation-delay: 0.1s; }
+        .contact-item:nth-child(2) { animation-delay: 0.2s; }
+        .contact-item:nth-child(3) { animation-delay: 0.3s; }
+        .contact-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .contact-item:hover {
+            background: rgba(255, 107, 53, 0.03);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 25px rgba(255, 107, 53, 0.15);
+            border-color: rgba(255, 107, 53, 0.2);
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        @keyframes contactSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .contact-item i {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1.5rem;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px rgba(255, 107, 53, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-item i::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .contact-item:hover i {
+            transform: scale(1.05) rotate(5deg);
+            box-shadow: 0 12px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .contact-item:hover i::before {
+            left: 100%;
+        }
+
+        .contact-item strong {
+            font-size: 1.2rem;
+            color: #ff6b35;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .contact-item div {
+            line-height: 1.6;
+        }
+
+        /* Clickable Links Styling */
+        .contact-link {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .contact-link:hover {
+            color: #ff6b35;
+            transform: translateX(5px);
+        }
+
+        .contact-link:active {
+            transform: scale(0.98);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+            color: white;
+            padding: 4rem 0 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b35, #ff8c42, #ff6b35);
+            animation: footerBorder 3s linear infinite;
+        }
+
+        @keyframes footerBorder {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1.5rem;
+            color: #ff6b35;
+            font-size: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .social-links a {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6b35, #ff8c42);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            font-size: 1.5rem;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px) scale(1.1) rotate(360deg);
+            box-shadow: 0 15px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Footer Contact Links */
+        .footer-contact-link {
+            color: #cccccc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-contact-link:hover {
+            color: #ff6b35;
+        }
+
+        /* Responsive Design */
+        /* Tablet Landscape (1024px and below) */
+        @media (max-width: 1024px) {
+            .contact-container {
+                gap: 4rem;
+            }
+            
+            .contact-info {
+                padding: 2.5rem 2rem;
+            }
+            
+            .contact-item {
+                padding: 1.3rem;
+                font-size: 1rem;
+            }
+            
+            .contact-item strong {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Tablet Portrait and Small Laptops (768px and below) */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 70px;
+                flex-direction: column;
+                background: rgba(0, 0, 0, 0.95);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: 0 10px 27px rgba(255, 107, 53, 0.2);
+                backdrop-filter: blur(20px);
+                padding: 3rem 0;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                font-size: 1.4rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .trainer-container,
+            .contact-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .trainer-photo {
+                width: 280px;
+                height: 280px;
+                margin: 0 auto;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .services-grid,
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-container {
+                gap: 3rem;
+            }
+
+            .google-form-container {
+                padding: 15px;
+            }
+
+            .google-form-container iframe {
+                height: 500px;
+            }
+
+            /* Contact Info Responsive Adjustments */
+            .contact-info {
+                padding: 2rem 1.5rem;
+                margin-top: 0;
+            }
+
+            .contact-item {
+                flex-direction: row;
+                align-items: flex-start;
+                padding: 1.2rem;
+                margin-bottom: 2rem;
+                font-size: 0.95rem;
+            }
+
+            .contact-item i {
+                width: 45px;
+                height: 45px;
+                margin-right: 1.2rem;
+                font-size: 1.2rem;
+                flex-shrink: 0;
+            }
+
+            .contact-item strong {
+                font-size: 1.05rem;
+            }
+        }
+
+        /* Mobile Large (480px and below) */
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .trainer-photo {
+                width: 250px;
+                height: 250px;
+                margin: 0 auto;
+            }
+
+            .section {
+                padding: 80px 0;
+            }
+
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 1.1rem;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .logo img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .google-form-container {
+                padding: 12px;
+            }
+
+            .google-form-container iframe {
+                height: 450px;
+            }
+
+            /* Contact Info Mobile Adjustments */
+            .contact-info {
+                padding: 1.5rem 1rem;
+                border-radius: 15px;
+            }
+
+            .contact-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .contact-item i {
+                width: 50px;
+                height: 50px;
+                margin: 0 auto 1rem auto;
+                font-size: 1.3rem;
+            }
+
+            .contact-item div {
+                width: 100%;
+            }
+
+            .contact-item strong {
+                font-size: 1rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .contact-link {
+                font-size: 0.9rem;
+                word-break: break-all;
+            }
+
+            .section-title {
+                font-size: 2.2rem;
+                margin-bottom: 3rem;
+            }
+        }
+
+        /* Mobile Small (320px and below) */
+        @media (max-width: 320px) {
+            .trainer-photo {
+                width: 220px;
+                height: 220px;
+                margin: 0 auto;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            /* Contact Info Small Mobile */
+            .contact-info {
+                padding: 1.2rem 0.8rem;
+                margin: 0 -5px;
+            }
+
+            .contact-item {
+                padding: 1.2rem 0.8rem;
+                margin-bottom: 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            .contact-item i {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2rem;
+            }
+
+            .contact-item strong {
+                font-size: 0.95rem;
+            }
+
+            .contact-link {
+                font-size: 0.85rem;
+            }
+
+            .google-form-container {
+                padding: 10px;
+                margin: 0 -5px;
+            }
+
+            .google-form-container iframe {
+                height: 400px;
+            }
+        }
+
+        /* High DPI Displays (Retina) */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .contact-item i {
+                -webkit-font-smoothing: antialiased;
+                -moz-osx-font-smoothing: grayscale;
+            }
+        }
+
+        /* Landscape Mobile Devices */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .contact-info {
+                padding: 1.5rem;
+            }
+            
+            .contact-item {
+                margin-bottom: 1.5rem;
+                padding: 1rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            .contact-item {
+                -webkit-tap-highlight-color: rgba(255, 107, 53, 0.1);
+            }
+            
+            .contact-link {
+                -webkit-tap-highlight-color: rgba(255, 107, 53, 0.2);
+            }
+        }
+
+        /* Loading Animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 2s ease-in-out 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid transparent;
+            border-top: 4px solid #ff6b35;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scroll Progress Bar */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b35, #ff8c42);
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Gym Equipment Floating Animation */
+        .floating-gym-equipment {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .gym-equipment {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0.08;
+            animation: equipmentFloat 12s ease-in-out infinite;
+            color: #ff6b35;
+        }
+
+        .gym-equipment:nth-child(1) {
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .gym-equipment:nth-child(2) {
+            top: 30%;
+            right: 8%;
+            animation-delay: 2s;
+        }
+
+        .gym-equipment:nth-child(3) {
+            bottom: 40%;
+            left: 12%;
+            animation-delay: 4s;
+        }
+
+        .gym-equipment:nth-child(4) {
+            bottom: 20%;
+            right: 15%;
+            animation-delay: 6s;
+        }
+
+        .gym-equipment:nth-child(5) {
+            top: 60%;
+            left: 40%;
+            animation-delay: 8s;
+        }
+
+        .gym-equipment:nth-child(6) {
+            top: 80%;
+            right: 30%;
+            animation-delay: 10s;
+        }
+
+        @keyframes equipmentFloat {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg) scale(1);
+                opacity: 0.08;
+            }
+            25% {
+                transform: translateY(-30px) rotate(90deg) scale(1.1);
+                opacity: 0.12;
+            }
+            50% {
+                transform: translateY(-60px) rotate(180deg) scale(0.9);
+                opacity: 0.15;
+            }
+            75% {
+                transform: translateY(-30px) rotate(270deg) scale(1.05);
+                opacity: 0.1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- Particles Background -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Floating Gym Equipment -->
+    <div class="floating-gym-equipment">
+        <div class="gym-equipment">🏋️</div>
+        <div class="gym-equipment">💪</div>
+        <div class="gym-equipment">🤸</div>
+        <div class="gym-equipment">🏃</div>
+        <div class="gym-equipment">⚡</div>
+        <div class="gym-equipment">🥇</div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <div class="logo">
+                    <img src="assets/logo well fit.png" alt="WellFit Logo">
+                    <span>WellFit</span>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#trainer">Trainer</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="gym-icons">
+            <div class="gym-icon">🏋️</div>
+            <div class="gym-icon">💪</div>
+            <div class="gym-icon">🤸</div>
+            <div class="gym-icon">⚡</div>
+        </div>
+        <div class="hero-content">
+            <h1>Transform Your Body</h1>
+            <p>Professional online personal training with cutting-edge techniques</p>
+            <a href="#contact" class="cta-button">Start Your Journey</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💪</div>
+                    <h3>Personal Training</h3>
+                    <p>One-on-one virtual sessions with real-time feedback and form correction. Experience personalized coaching that adapts to your progress.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📋</div>
+                    <h3>Custom Workout Plans</h3>
+                    <p>AI-powered workout routines designed specifically for your goals, equipment, and schedule. Updated weekly based on your progress.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🥗</div>
+                    <h3>Nutrition Guidance</h3>
+                    <p>Personalized meal plans and macro tracking that align with your fitness goals. Sustainable nutrition habits for lasting results.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Advanced analytics and body composition monitoring. Detailed insights into your transformation journey with measurable results.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💬</div>
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock motivation and guidance through our premium app. Never train alone with our supportive community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trainer Section -->
+    <section id="trainer" class="section">
+        <div class="container">
+            <h2 class="section-title">Meet Your Trainer</h2>
+            <div class="trainer-container">
+                <div class="trainer-image">
+                    <div class="trainer-photo">
+                        <img src="assets/trainer.jpg" alt="Trainer Surya Pandi">
+                    </div>
+                </div>
+                <div class="trainer-info">
+                    <h3>SURYA PANDI</h3>
+                    <p>Experienced personal trainer</p>
+                    <p>Hi There, Iam Surya With over 2+years of experience in the fitness industry, I've helped over fifty of clients to achieve remarkable transformations. My evidence-based approach combines cutting-edge training methods with personalized nutrition strategies to deliver exceptional results.</p>
+                    
+                    <ul class="credentials">
+                        <li>Certified Nutrition</li>
+                        <li>2+ Years Experience</li>
+                        <li>50+ Transformations</li>
+                         <li>Certified Personal Trainer</li>
+                    </ul>
+                    
+                    <p>I believe that every fitness journey is unique. That's why I create completely customized programs that fit your lifestyle, preferences, and goals. Ready to unlock your potential and achieve the body you've always wanted?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <div class="container">
+            <h2 class="section-title">Weight Loss Training Packages</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>1-Month</h3>
+                    <div class="price">₹999<span style="font-size: 1rem;">/month</span></div>
+                    <ul class="features">
+                        <li>Everything in Starter</li>
+                        <li>2 live training sessions/week</li>
+                        <li>Personalized meal plans</li>
+                        <li>Daily motivation & support</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Monthly transformation photos</li>
+                        <li>Priority chat support</li>
+                    </ul>
+                    <a href="#contact" class="cta-button">Get Started</a>
+                </div>
+                
+                <div class="pricing-card featured">
+                    <h3>3-Months</h3>
+                    <div class="price">₹2,499<span style="font-size: 1rem;"></span></div>
+                    <ul class="features">
+                        <li>Everything in Starter</li>
+                        <li>2 live training sessions/week</li>
+                        <li>Personalized meal plans</li>
+                        <li>Daily motivation & support</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Monthly transformation photos</li>
+                        <li>Priority chat support</li>
+                    </ul>
+                    <a href="#contact" class="cta-button" style="background: white; color: #ff6b35;">Most Popular</a>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>6-Months
+                        <h4>Limited Offer</h4>
+                    </h3>
+                    <div class="price">₹2,999<span style="font-size: 1rem;"></span></div>
+                    <ul class="features">
+                        <li>Everything in Starter</li>
+                        <li>2 live training sessions/week</li>
+                        <li>Personalized meal plans</li>
+                        <li>Daily motivation & support</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Monthly transformation photos</li>
+                        <li>Priority chat support</li>
+                    </ul>
+                    <a href="#contact" class="cta-button">Go Champion</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section">
+        <div class="container">
+            <h2 class="section-title">Start Your Transformation</h2>
+            <div class="contact-container">
+                <!-- Google Form Container -->
+                <div class="google-form-container">
+                    <!-- Replace the src attribute below with your actual Google Form embed URL -->
+                    <iframe src="https://forms.gle/2bgq8afhjdgPBBxH7" 
+                            title="Contact Form">
+                        Loading…
+                    </iframe>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i>📧</i>
+                        <div>
+                            <strong>Email</strong><br>
+                            <a href="mailto:service.wellfit@gmail.com?subject=Fitness Training Inquiry&body=Hi, I'm interested in your personal training services. Could you please provide more information?" class="contact-link">service.wellfit@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i>📱</i>
+                        <div>
+                            <strong>Phone</strong><br>
+                            <a href="tel:+919360946221" class="contact-link">+91 93609 46221</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i>🌐</i>
+                        <div>
+                            <strong>Service Area</strong><br>
+                            Online Training Available Worldwide
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i>⏰</i>
+                        <div>
+                            <strong>Training Hours</strong><br>
+                            Mon-Fri: 6AM - 9PM<br>
+                            Weekends: 8AM - 6PM
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>WellFit</h3>
+                    <p>Transform your body and life with elite-level online personal training. Join thousands who've already started their journey to greatness.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#services" style="color: #cccccc; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='#ff6b35'" onmouseout="this.style.color='#cccccc'">Services</a></p>
+                    <p><a href="#trainer" style="color: #cccccc; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='#ff6b35'" onmouseout="this.style.color='#cccccc'">About Trainer</a></p>
+                    <p><a href="#pricing" style="color: #cccccc; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='#ff6b35'" onmouseout="this.style.color='#cccccc'">Pricing</a></p>
+                    <p><a href="#contact" style="color: #cccccc; text-decoration: none; transition: color 0.3s ease;" onmouseover="this.style.color='#ff6b35'" onmouseout="this.style.color='#cccccc'">Contact</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p style="margin-bottom: 0.5rem;">📧 <a href="mailto:service.wellfit@gmail.com?subject=Fitness Training Inquiry&body=Hi, I'm interested in your personal training services. Could you please provide more information?" class="footer-contact-link">service.wellfit@gmail.com</a></p>
+                    <p style="margin-bottom: 0.5rem;">📱 <a href="tel:+919360946221" class="footer-contact-link">+91 93609 46221</a></p>
+                    <p>🌐 Available Worldwide</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid #ff6b35; padding-top: 2rem; margin-top: 3rem;">
+                <p>&copy; 2025 WellFit. All rights reserved. | <a href="#" style="color: #ff6b35; text-decoration: none;">Privacy Policy</a> | <a href="#" style="color: #ff6b35; text-decoration: none;">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Create animated particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Progress bar functionality
+        function updateProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (scrollTop / scrollHeight) * 100;
+            progressBar.style.width = scrolled + '%';
+        }
+
+        // Mobile menu toggle with animation
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            
+            // Animate hamburger lines
+            const spans = hamburger.querySelectorAll('span');
+            if (navMenu.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                const spans = hamburger.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            });
+        });
+
+        // Enhanced navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            updateProgressBar();
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Advanced intersection observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const animationObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0) scale(1)';
+                    
+                    // Add stagger effect for grid items
+                    if (entry.target.classList.contains('service-card') || entry.target.classList.contains('pricing-card')) {
+                        const siblings = Array.from(entry.target.parentNode.children);
+                        const index = siblings.indexOf(entry.target);
+                        entry.target.style.transitionDelay = (index * 0.1) + 's';
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Animate elements on scroll
+        document.querySelectorAll('.service-card, .pricing-card, .contact-item, .trainer-info > *').forEach(element => {
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(30px) scale(0.95)';
+            element.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            animationObserver.observe(element);
+        });
+
+        // Enhanced service card interactions
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-15px) scale(1.03) rotateY(5deg)';
+                card.querySelector('.service-icon').style.transform = 'scale(1.1) rotate(360deg)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(-15px) scale(1.03) rotateY(0deg)';
+                card.querySelector('.service-icon').style.transform = 'scale(1) rotate(0deg)';
+            });
+        });
+
+        // Pricing card interactions
+        document.querySelectorAll('.pricing-card:not(.featured)').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-20px) scale(1.05) rotateX(5deg)';
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(-20px) scale(1.05) rotateX(0deg)';
+            });
+        });
+
+        // Initialize animations and effects
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            
+            // Remove loading overlay
+            setTimeout(() => {
+                const loadingOverlay = document.querySelector('.loading-overlay');
+                if (loadingOverlay) {
+                    loadingOverlay.remove();
+                }
+            }, 2000);
+        });
+
+        // Add dynamic cursor effect for interactive elements
+        document.querySelectorAll('a, button, .service-card, .pricing-card').forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                document.body.style.cursor = 'pointer';
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                document.body.style.cursor = 'default';
+            });
+        });
+
+        // Performance optimization: Throttle scroll events
+        let ticking = false;
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    updateProgressBar();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', requestTick);
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+
+        // Gym equipment floating animation control
+        function createGymEquipmentAnimation() {
+            const gymEquipment = document.querySelectorAll('.gym-equipment');
+            
+            gymEquipment.forEach((equipment, index) => {
+                equipment.addEventListener('animationiteration', () => {
+                    // Change emoji occasionally for variety
+                    const gymEmojis = ['🏋️', '💪', '🤸', '🏃', '⚡', '🥇', '🏆', '🔥', '⭐', '🎯'];
+                    if (Math.random() > 0.8) {
+                        equipment.textContent = gymEmojis[Math.floor(Math.random() * gymEmojis.length)];
+                    }
+                });
+            });
+        }
+
+        // Initialize gym equipment animations
+        document.addEventListener('DOMContentLoaded', () => {
+            createGymEquipmentAnimation();
+        });
+
+        // Add subtle bounce effect to gym icons in hero
+        document.querySelectorAll('.gym-icon').forEach((icon, index) => {
+            icon.addEventListener('mouseenter', () => {
+                icon.style.transform = 'scale(1.2) rotate(15deg)';
+                icon.style.opacity = '0.3';
+            });
+            
+            icon.addEventListener('mouseleave', () => {
+                icon.style.transform = 'scale(1) rotate(0deg)';
+                icon.style.opacity = '0.1';
+            });
+        });
+    </script>
+</body>
+</html>
