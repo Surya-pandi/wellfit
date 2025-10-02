@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WellFit - Online Personal Training</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #ffffff;
+            background: #000000;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        /* Video Background - Only visible in hero section */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .video-background video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            object-position: center;
+        }
+
+        .video-background::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+        }
+        
+        /* Mobile video adjustments */
+        @media (max-width: 768px) {
+            .video-background video {
+                width: auto;
+                height: 100%;
+                min-width: 100%;
+                min-height: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .video-background::after {
+                background: rgba(0, 0, 0, 0.7);
+            }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        nav.scrolled {
+            background: rgba(0, 0, 0, 0.95);
+            border-bottom-color: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42, #ffa500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* New: logo image */
+        .logo-img {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+            display: block;
+        }
+
+        .logo:hover .logo-img {
+            transform: scale(1.1);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 3rem;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-menu a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #ff6b35, #ff8c42);
+            transition: width 0.3s ease;
+        }
+
+        .nav-menu a:hover {
+            color: #ffffff;
+        }
+
+        .nav-menu a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 2px;
+            background: #ff6b35;
+            transition: 0.3s;
+            border-radius: 2px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            padding: 100px 0;
+            background: transparent;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #ffffff 0%, #ff6b35 50%, #ff8c42 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            margin-bottom: 3rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            color: white;
+            padding: 18px 45px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 50px rgba(255, 107, 53, 0.4);
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Sections */
+        .section {
+            padding: 120px 0;
+            position: relative;
+            background: #000000;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, #ffffff, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            background: rgba(255, 107, 53, 0.05);
+            border-color: rgba(255, 107, 53, 0.3);
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(255, 107, 53, 0.2);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .service-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .service-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+        }
+
+        /* Trainer Section */
+        .trainer-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 6rem;
+            align-items: center;
+        }
+
+        .trainer-image {
+            position: relative;
+        }
+
+        .trainer-photo {
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid rgba(255, 107, 53, 0.3);
+            box-shadow: 0 40px 80px rgba(255, 107, 53, 0.3);
+        }
+
+        .trainer-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .trainer-info h3 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .trainer-info p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .credentials {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .credentials li {
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .credentials li:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Pricing */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 3rem 2.5rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-15px);
+            border-color: rgba(255, 107, 53, 0.3);
+            box-shadow: 0 30px 60px rgba(255, 107, 53, 0.2);
+        }
+
+        .pricing-card.featured {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.15), rgba(255, 140, 66, 0.15));
+            border: 2px solid rgba(255, 107, 53, 0.5);
+            transform: scale(1.05);
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1.5rem 0;
+        }
+
+        .features {
+            list-style: none;
+            text-align: left;
+            margin: 2rem 0;
+        }
+
+        .features li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-left: 30px;
+            position: relative;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        .contact-section {
+            text-align: center;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-content p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .contact-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .contact-item {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(255, 107, 53, 0.05);
+            border-color: rgba(255, 107, 53, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .contact-item i {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b35, #ff8c42);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .contact-item strong {
+            display: block;
+            color: #ff6b35;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .contact-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-link:hover {
+            color: #ff6b35;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 4rem 0 2rem;
+            border-top: 1px solid rgba(255, 107, 53, 0.2);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h3 {
+            color: #ff6b35;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .footer-section p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-contact-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-contact-link:hover {
+            color: #ff6b35;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                left: -100%;
+                top: 80px;
+                flex-direction: column;
+                background: rgba(0, 0, 0, 0.98);
+                width: 100%;
+                padding: 3rem;
+                gap: 2rem;
+                transition: 0.3s;
+                backdrop-filter: blur(20px);
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .trainer-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .pricing-card.featured {
+                transform: none;
+            }
+
+            .container {
+                padding: 0 20px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .trainer-photo {
+                max-width: 100%;
+            }
+
+            .trainer-info h3 {
+                font-size: 2rem;
+            }
+
+            .contact-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .nav-container {
+                padding: 1rem 0;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .logo-img {
+                width: 35px;
+                height: 35px;
+            }
+
+            .service-card,
+            .pricing-card,
+            .contact-item {
+                padding: 2rem 1.5rem;
+            }
+
+            .section {
+                padding: 80px 0;
+            }
+
+            .price {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Video Background -->
+    <div class="video-background">
+        <video autoplay muted loop playsinline>
+            <source src="assets/background video.mp4" type="video/mp4" />
+        </video>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-container">
+                <!-- Updated logo: image + text -->
+                <div class="logo">
+                    <img src="assets/logo well fit.png" alt="WellFit Logo" class="logo-img" />
+                    <span>WellFit</span>
+                </div>
+
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#trainer">Trainer</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="form.html">Contact</a></li>
+                </ul>
+
+                <div class="hamburger" id="hamburger" aria-label="Open navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Transform Your Body</h1>
+            <p>Professional online personal training with cutting-edge techniques</p>
+            <a href="form.html" class="cta-button">Start Your Journey</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="section">
+        <div class="container">
+            <h2 class="section-title">Our Services</h2>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">💪</div>
+                    <h3>Personal Training</h3>
+                    <p>One-on-one virtual sessions with real-time feedback and form correction. Experience personalized coaching that adapts to your progress.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📋</div>
+                    <h3>Custom Workout Plans</h3>
+                    <p>AI-powered workout routines designed specifically for your goals, equipment, and schedule. Updated weekly based on your progress.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">🥗</div>
+                    <h3>Nutrition Guidance</h3>
+                    <p>Personalized meal plans and macro tracking that align with your fitness goals. Sustainable nutrition habits for lasting results.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">📊</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Advanced analytics and body composition monitoring. Detailed insights into your transformation journey with measurable results.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">💬</div>
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock motivation and guidance through our premium app. Never train alone with our supportive community.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trainer Section -->
+    <section id="trainer" class="section">
+        <div class="container">
+            <h2 class="section-title">Meet Your Trainer</h2>
+            <div class="trainer-container">
+                <div class="trainer-image">
+                    <div class="trainer-photo">
+                        <img src="assets/trainer.jpg" alt="Trainer" />
+                    </div>
+                </div>
+                <div class="trainer-info">
+                    <h3>SURYA PANDI</h3>
+                    <p>Experienced personal trainer</p>
+                    <p>Hi There, I'm Surya with over 2+ years of experience in the fitness industry. I've helped over fifty clients achieve remarkable transformations. My evidence-based approach combines cutting-edge training methods with personalized nutrition strategies to deliver exceptional results.</p>
+
+                    <ul class="credentials">
+                        <li>Certified Nutrition</li>
+                        <li>2+ Years Experience</li>
+                        <li>50+ Transformations</li>
+                        <li>Certified Personal Trainer</li>
+                    </ul>
+
+                    <p>I believe that every fitness journey is unique. That's why I create completely customized programs that fit your lifestyle, preferences, and goals. Ready to unlock your potential?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="section">
+        <div class="container">
+            <h2 class="section-title">Training Packages</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>1-Month</h3>
+                    <div class="price">₹999</div>
+                    <ul class="features">
+                        <li>2 live training sessions/week</li>
+                        <li>Personalized meal plans</li>
+                        <li>Daily motivation & support</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Monthly transformation photos</li>
+                        <li>Priority chat support</li>
+                    </ul>
+                    <a href="form.html" class="cta-button">Get Started</a>
+                </div>
+
+                <div class="pricing-card featured">
+                    <h3>3-Months</h3>
+                    <div class="price">₹2,499</div>
+                    <ul class="features">
+                        <li>2 live training sessions/week</li>
+                        <li>Personalized meal plans</li>
+                        <li>Daily motivation & support</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Monthly transformation photos</li>
+                        <li>Priority chat support</li>
+                    </ul>
+                    <a href="form.html" class="cta-button">Most Popular</a>
+                </div>
+
+                <div class="pricing-card">
+                    <h3>6-Months</h3>
+                    <div class="price">₹2,999</div>
+                    <ul class="features">
+                        <li>2 live training sessions/week</li>
+                        <li>Personalized meal plans</li>
+                        <li>Daily motivation & support</li>
+                        <li>Advanced analytics dashboard</li>
+                        <li>Monthly transformation photos</li>
+                        <li>Priority chat support</li>
+                    </ul>
+                    <a href="form.html" class="cta-button">Best Value</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section contact-section">
+        <div class="container">
+            <h2 class="section-title">Start Your Transformation</h2>
+            <div class="contact-content">
+                <p>Ready to begin your fitness journey? Fill out our contact form and let's start working together to achieve your goals. We'll get back to you within 24 hours!</p>
+                
+                <a href="form.html" class="cta-button" style="margin: 2rem 0; display: inline-block;">Go to Contact Form</a>
+
+                <div class="contact-info-grid">
+                    <div class="contact-item">
+                        <i>📧</i>
+                        <div>
+                            <strong>Email</strong>
+                            <a href="mailto:service.wellfit@gmail.com" class="contact-link">service.wellfit@gmail.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i>📱</i>
+                        <div>
+                            <strong>Phone</strong>
+                            <a href="tel:+919360946221" class="contact-link">+91 93609 46221</a>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i>🌍</i>
+                        <div>
+                            <strong>Service Area</strong>
+                            Online Training Available Worldwide
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i>⏰</i>
+                        <div>
+                            <strong>Training Hours</strong>
+                            Mon-Fri: 6AM - 9PM<br />
+                            Weekends: 8AM - 6PM
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>WellFit</h3>
+                    <p>Transform your body and life with elite-level online personal training.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <p><a href="#services" class="footer-contact-link">Services</a></p>
+                    <p><a href="#trainer" class="footer-contact-link">About Trainer</a></p>
+                    <p><a href="#pricing" class="footer-contact-link">Pricing</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Info</h3>
+                    <p><a href="mailto:service.wellfit@gmail.com" class="footer-contact-link">service.wellfit@gmail.com</a></p>
+                    <p><a href="tel:+919360946221" class="footer-contact-link">+91 93609 46221</a></p>
+                </div>
+            </div>
+            <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255, 107, 53, 0.2); color: rgba(255, 255, 255, 0.6);">
+                <p>&copy; 2025 WellFit. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+        const navbar = document.getElementById('navbar');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const spans = hamburger.querySelectorAll('span');
+            if (navMenu.classList.contains('active')) {
+                spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+                spans[1].style.opacity = '0';
+                spans[2].style.transform = 'rotate(-45deg) translate(7px, -6px)';
+            } else {
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            }
+        });
+
+        // Close menu when clicking nav links
+        document.querySelectorAll('.nav-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                const spans = hamburger.querySelectorAll('span');
+                spans[0].style.transform = 'none';
+                spans[1].style.opacity = '1';
+                spans[2].style.transform = 'none';
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
